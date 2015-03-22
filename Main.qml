@@ -10,6 +10,8 @@ MainView {
     applicationName: "google-plus.ogra"
 
     useDeprecatedToolbar: false
+    anchorToKeyboard: true
+
 //    property string myUrl: "http://www.zeit.de/"
 //    property string myPattern: "https?://*.zeit.de/" 
 //    property string myUrl: "http://www.heise.de/"
