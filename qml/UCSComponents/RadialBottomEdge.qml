@@ -69,11 +69,11 @@ Item {
             height: parent.height
             border.color: "#B3B3B3"
             color: "Transparent"
-            radius: parent.radius + 2
+            radius: parent.radius + 1
             z: -1
             anchors {
                 centerIn: parent
-                verticalCenterOffset: -2 //units.gu(-0.3)
+                verticalCenterOffset: -1 //units.gu(-0.3)
             }
         }
 
