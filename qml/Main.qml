@@ -4,26 +4,30 @@ import Ubuntu.Components 1.1
 import com.canonical.Oxide 1.0 as Oxide
 import "UCSComponents"
 import "."
+import "../config.js" as Conf
 
 MainView {
     objectName: "mainView"
+
     applicationName: "google-plus.ogra"
 
     useDeprecatedToolbar: false
     anchorToKeyboard: true
+    automaticOrientation: true
 
-//    property string myUrl: "http://www.zeit.de/"
-//    property string myPattern: "https?://*.zeit.de/" 
-//    property string myUrl: "http://www.heise.de/"
-//    property string myPattern: "https?://*.heise.de/"
-    property string myUrl: "https://plus.google.com/"
-    property string myPattern: "https?://plus.google.*/*,https?://accounts.google.*/*,https?://accounts.google.co.*/*,https?://www.google.*/accounts/*"
+    property string myUrl: Conf.webappUrl
+    property string myPattern: Conf.webappUrlPattern
 
     property string myUA: "Mozilla/5.0 (Linux; Android 5.0; Nexus 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.102 Mobile Safari/537.36"
 
     Page {
         id: page
-
+        anchors {
+            fill: parent
+            bottom: parent.bottom
+        }
+        width: parent.width
+        height: parent.height
 
         WebContext {
             id: webcontext
@@ -31,15 +35,20 @@ MainView {
         }
         WebView {
             id: webview
-            anchors.fill: parent
+            anchors {
+                fill: parent
+                bottom: parent.bottom
+            } 
             width: parent.width
             height: parent.height
 
             context: webcontext
+
             function navigationRequestedDelegate(request) {
                 var url = request.url.toString();
                 var pattern = myPattern.split(',');
                 var isvalid = false;
+
                 for (var i=0; i<pattern.length; i++) {
                     var tmpsearch = pattern[i].replace(/\*/g,'(.*)')
                     var search = tmpsearch.replace(/^https\?:\/\//g, '(http|https):\/\/');
@@ -60,7 +69,6 @@ MainView {
         }
         ThinProgressBar {
             webview: webview
-
             anchors {
                 left: parent.left
                 right: parent.right
@@ -68,6 +76,7 @@ MainView {
             }
         }
         RadialBottomEdge {
+            id: nav
             visible: true
             actions: [
                 RadialAction {
@@ -98,5 +107,13 @@ MainView {
                 }
             ]
         }
+    }
+    Connections {
+        target: Qt.inputMethod
+        onVisibleChanged: nav.visible = !nav.visible
+    }
+    Connections {
+        target: webview
+        onFullscreenChanged: nav.visible = !webview.fullscreen
     }
 }

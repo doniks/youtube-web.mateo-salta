@@ -1,5 +1,7 @@
 import QtQuick 2.0
+import QtFeedback 5.0
 import Ubuntu.Components 1.1
+import QtGraphicalEffects 1.0
 
 Item {
     id: bottomEdge
@@ -19,6 +21,16 @@ Item {
     property real actionButtonDistance: 1.5* hintSize
 
     anchors.fill: parent
+
+    HapticsEffect {
+        id: clickEffect
+        attackIntensity: 0.0
+        attackTime: 50
+        intensity: 1.0
+        duration: 10
+        fadeTime: 50
+        fadeIntensity: 0.0
+    }
 
     Rectangle {
         id: bgVisual
@@ -50,6 +62,20 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         y: collapsedPosition
         z: parent.z + 1
+
+        Rectangle {
+            id: dropShadow
+            width: parent.width
+            height: parent.height
+            border.color: "#B3B3B3"
+            color: "Transparent"
+            radius: parent.radius + 2
+            z: -1
+            anchors {
+                centerIn: parent
+                verticalCenterOffset: -2 //units.gu(-0.3)
+            }
+        }
 
         Icon {
             id: hintIcon
@@ -117,6 +143,7 @@ Item {
                     anchors.fill: parent
                     enabled: modelData.enabled
                     onClicked: {
+                        clickEffect.start()
                         bottomEdgeHint.state = "collapsed"
                         modelData.triggered(null)
                     }

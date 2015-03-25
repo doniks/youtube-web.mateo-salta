@@ -8,9 +8,15 @@ To make use of this with your own webapp just follow the steps below.
 
 Fist of all branch this tree locally ...
 
-Edit the values of applicationName, myUrl and myPattern
-at the top of Main.qml to match your application name,
-web Url and webappUrlPatterns, similar to the known container webapp.
+    bzr branch lp:~ogra/junk/alternate-webapp-container
+
+== Building ==
+
+Edit the value of applicationName at the top of qml/Main.qml to match
+your application name to work around https://launchpad.net/bugs/1435778
+
+Edit config.js to add webappName, webappUrl and webappUrlPattern 
+similar to how you would use them as commandline options to webapp-container.
 
 Edit app.desktop and manifest.json to your liking.
 Replace icon.png with your own icon.
@@ -19,6 +25,9 @@ Now run:
     click build .
 
 This will create a .click package with you webapp.
+
+== Installing ==
+
 Push the click to your device via adb, then:
 
     adb shell pkcon install-local --allow-untrusted /path/to/click

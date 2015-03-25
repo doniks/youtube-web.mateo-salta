@@ -2,6 +2,6 @@
 Name=Google Plus
 Type=Application
 Icon=icon.png
-Exec=qmlscene $@ Main.qml
+Exec=qmlscene $@ qml/Main.qml
 Terminal=false
 X-Ubuntu-Touch=true
