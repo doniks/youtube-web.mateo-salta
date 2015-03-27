@@ -64,6 +64,7 @@ MainView {
                 }
             }
             Component.onCompleted: {
+                preferences.localStorageEnabled = true
                 url = myUrl
             }
         }
