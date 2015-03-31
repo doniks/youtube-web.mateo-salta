@@ -4,7 +4,8 @@
         "webview",
         "audio",
         "video",
-        "location"
+        "location",
+        "content_exchange"
     ],
     "policy_version": 1.1
 }

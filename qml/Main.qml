@@ -3,6 +3,7 @@ import Ubuntu.Web 0.2
 import Ubuntu.Components 1.1
 import com.canonical.Oxide 1.0 as Oxide
 import "UCSComponents"
+import Ubuntu.Content 1.1
 import "."
 import "../config.js" as Conf
 
@@ -43,6 +44,13 @@ MainView {
             height: parent.height
 
             context: webcontext
+            url: myUrl
+            preferences.localStorageEnabled: true
+            preferences.allowFileAccessFromFileUrls: true
+            preferences.allowUniversalAccessFromFileUrls: true
+            preferences.appCacheEnabled: true
+            preferences.javascriptCanAccessClipboard: true
+            filePicker: filePickerLoader.item
 
             function navigationRequestedDelegate(request) {
                 var url = request.url.toString();
@@ -63,9 +71,11 @@ MainView {
                     request.action = Oxide.NavigationRequest.ActionReject
                 }
             }
-            Component.onCompleted: {
-                preferences.localStorageEnabled = true
-                url = myUrl
+            onGeolocationPermissionRequested: { request.accept() }
+            Loader {
+                id: filePickerLoader
+                source: "ContentPickerDialog.qml"
+                asynchronous: true
             }
         }
         ThinProgressBar {
