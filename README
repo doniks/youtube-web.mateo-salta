@@ -18,6 +18,9 @@ your application name to work around https://launchpad.net/bugs/1435778
 Edit config.js to add webappName, webappUrl and webappUrlPattern 
 similar to how you would use them as commandline options to webapp-container.
 
+Optionally you can set the webappUA variable in config.js to override
+the User Agent string.
+
 Edit app.desktop and manifest.json to your liking.
 Replace icon.png with your own icon.
 
