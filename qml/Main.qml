@@ -71,6 +71,14 @@ MainView {
                     request.action = Oxide.NavigationRequest.ActionReject
                 }
             }
+            Component.onCompleted: {
+                preferences.localStorageEnabled = true
+                if (Qt.application.arguments[1].toString().indexOf(myUrl) > -1) {
+                    console.warn("got argument: " + Qt.application.arguments[1])
+                    url = Qt.application.arguments[1]
+                }
+                console.warn("url is: " + url)
+            }
             onGeolocationPermissionRequested: { request.accept() }
             Loader {
                 id: filePickerLoader
