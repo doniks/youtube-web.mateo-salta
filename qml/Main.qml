@@ -135,4 +135,11 @@ MainView {
         target: webview
         onFullscreenChanged: nav.visible = !webview.fullscreen
     }
+    Connections {
+        target: UriHandler
+        onOpened: {
+            webview.url = uris[0]
+            console.warn("uri-handler request")
+        }
+    }
 }
