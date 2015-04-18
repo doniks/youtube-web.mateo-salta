@@ -4,6 +4,7 @@ import Ubuntu.Components 1.1
 import com.canonical.Oxide 1.0 as Oxide
 import "UCSComponents"
 import Ubuntu.Content 1.1
+import QtMultimedia 5.0
 import "."
 import "../config.js" as Conf
 
@@ -40,6 +41,11 @@ MainView {
             fadeIntensity: 0.0
         }
 
+        SoundEffect {
+            id: clicksound
+            source: "sounds/Click.wav"
+        }
+
         WebContext {
             id: webcontext
             userAgent: myUA
@@ -69,6 +75,10 @@ MainView {
 
                 if (Conf.hapticLinks) {
                     vibration.start()
+                }
+
+                if (Conf.audibleLinks) {
+                    clicksound.play()
                 }
 
                 for (var i=0; i<pattern.length; i++) {
