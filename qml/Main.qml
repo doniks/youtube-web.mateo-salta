@@ -30,6 +30,16 @@ MainView {
         width: parent.width
         height: parent.height
 
+        HapticsEffect {
+            id: vibration
+            attackIntensity: 0.0
+            attackTime: 50
+            intensity: 1.0
+            duration: 10
+            fadeTime: 50
+            fadeIntensity: 0.0
+        }
+
         WebContext {
             id: webcontext
             userAgent: myUA
@@ -56,6 +66,10 @@ MainView {
                 var url = request.url.toString();
                 var pattern = myPattern.split(',');
                 var isvalid = false;
+
+                if (Conf.hapticLinks) {
+                    vibration.start()
+                }
 
                 for (var i=0; i<pattern.length; i++) {
                     var tmpsearch = pattern[i].replace(/\*/g,'(.*)')
