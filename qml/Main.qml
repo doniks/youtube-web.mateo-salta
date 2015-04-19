@@ -5,6 +5,7 @@ import com.canonical.Oxide 1.0 as Oxide
 import "UCSComponents"
 import Ubuntu.Content 1.1
 import QtMultimedia 5.0
+import QtFeedback 5.0
 import "."
 import "../config.js" as Conf
 
