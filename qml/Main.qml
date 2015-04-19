@@ -44,7 +44,7 @@ MainView {
 
         SoundEffect {
             id: clicksound
-            source: "sounds/Click.wav"
+            source: "../sounds/Click.wav"
         }
 
         WebContext {
