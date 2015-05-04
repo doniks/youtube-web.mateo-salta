@@ -163,6 +163,9 @@ MainView {
     Connections {
         target: UriHandler
         onOpened: {
+            if (uris.length === 0 ) {
+                return;
+            }
             webview.url = uris[0]
             console.warn("uri-handler request")
         }
