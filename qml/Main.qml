@@ -75,8 +75,6 @@ MainView {
 
             function navigationRequestedDelegate(request) {
                 var url = request.url.toString();
-                var pattern = myPattern.split(',');
-                var isvalid = false;
 
                 if (Conf.hapticLinks) {
                     vibration.start()
@@ -86,15 +84,7 @@ MainView {
                     clicksound.play()
                 }
 
-                for (var i=0; i<pattern.length; i++) {
-                    var tmpsearch = pattern[i].replace(/\*/g,'(.*)')
-                    var search = tmpsearch.replace(/^https\?:\/\//g, '(http|https):\/\/');
-                    if (url.match(search)) {
-                       isvalid = true;
-                       break
-                    }
-                } 
-                if(isvalid == false) {
+                if(isValid(url) == false) {
                     console.warn("Opening remote: " + url);
                     Qt.openUrlExternally(url)
                     request.action = Oxide.NavigationRequest.ActionReject
@@ -102,9 +92,11 @@ MainView {
             }
             Component.onCompleted: {
                 preferences.localStorageEnabled = true
-                if (Qt.application.arguments[1].toString().indexOf(myUrl) > -1) {
+                if (Qt.application.arguments[2] != undefined ) {
                     console.warn("got argument: " + Qt.application.arguments[1])
-                    url = Qt.application.arguments[1]
+                    if(isValid(Qt.application.arguments[1]) == true) {
+                        url = Qt.application.arguments[1]
+                    }
                 }
                 console.warn("url is: " + url)
             }
@@ -113,6 +105,17 @@ MainView {
                 id: filePickerLoader
                 source: "ContentPickerDialog.qml"
                 asynchronous: true
+            }
+            function isValid (url){ 
+                var pattern = myPattern.split(',');
+                for (var i=0; i<pattern.length; i++) {
+                    var tmpsearch = pattern[i].replace(/\*/g,'(.*)')
+                    var search = tmpsearch.replace(/^https\?:\/\//g, '(http|https):\/\/');
+                    if (url.match(search)) {
+                       return true;
+                    }
+                } 
+                return false; 
             }
         }
         ThinProgressBar {
