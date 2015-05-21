@@ -22,6 +22,7 @@ MainView {
     property string myPattern: Conf.webappUrlPattern
 
     property string myUA: Conf.webappUA ? Conf.webappUA : "Mozilla/5.0 (Linux; Android 5.0; Nexus 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.102 Mobile Safari/537.36"
+    property var myCookiePolicy: ( Conf.allowCookies == true ) ? WebContext.WebContext.CookiePolicyAllowAll : WebContext.WebContext.CookiePolicyBlockAll
 
     Page {
         id: page
@@ -49,6 +50,9 @@ MainView {
 
         WebContext {
             id: webcontext
+            cachePath: cacheLocation
+            dataPath: dataLocation
+            cookiePolicy: myCookiePolicy
             userAgent: myUA
         }
         WebView {

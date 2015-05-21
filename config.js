@@ -4,6 +4,9 @@ var webappName = "google-plus.ogra"
 // the start url of your app (required)
 var webappUrl = "https://plus.google.com/"
 
+// allowCookies true/false (required)
+var allowCookies = true
+
 // the the pattern that defines which links are considered
 // local and which are opened in an external browser (required)
 var webappUrlPattern = "https?://plus.google.*/*,https?://accounts.google.*/*,https?://accounts.google.co.*/*,https?://www.google.*/accounts/*"
