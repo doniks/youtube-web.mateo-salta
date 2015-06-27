@@ -1,10 +1,11 @@
 {
     "description": "Another G+ WebApp",
-    "framework": "ubuntu-sdk-14.04",
+    "framework": "ubuntu-sdk-15.04",
     "hooks": {
         "google-plus": {
         "apparmor": "app.json",
-        "desktop": "app.desktop"
+        "desktop": "app.desktop",
+        "content-hub": "content-hub.json"
     }
 },
     "maintainer": "Oliver Grawert <ogra@ubuntu.com>",

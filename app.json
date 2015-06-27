@@ -5,7 +5,8 @@
         "audio",
         "video",
         "location",
-        "content_exchange"
+        "content_exchange",
+        "content_exchange_source"
     ],
-    "policy_version": 1.1
+    "policy_version": 1.3
 }

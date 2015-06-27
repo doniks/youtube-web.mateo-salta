@@ -1,9 +1,10 @@
-import QtQuick 2.2
+import QtQuick 2.4
 import Ubuntu.Web 0.2
-import Ubuntu.Components 1.1
-import com.canonical.Oxide 1.0 as Oxide
+import Ubuntu.Components 1.2
+import com.canonical.Oxide 1.7 as Oxide
 import "UCSComponents"
 import Ubuntu.Content 1.1
+import "actions" as Actions
 import QtMultimedia 5.0
 import QtFeedback 5.0
 import "."
@@ -14,7 +15,6 @@ MainView {
 
     applicationName: "google-plus.ogra"
 
-    useDeprecatedToolbar: false
     anchorToKeyboard: true
     automaticOrientation: true
 
@@ -22,7 +22,6 @@ MainView {
     property string myPattern: Conf.webappUrlPattern
 
     property string myUA: Conf.webappUA ? Conf.webappUA : "Mozilla/5.0 (Linux; Android 5.0; Nexus 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.102 Mobile Safari/537.36"
-    property var myCookiePolicy: ( Conf.allowCookies == true ) ? WebContext.WebContext.CookiePolicyAllowAll : WebContext.WebContext.CookiePolicyBlockAll
 
     Page {
         id: page
@@ -50,9 +49,6 @@ MainView {
 
         WebContext {
             id: webcontext
-            cachePath: cacheLocation
-            dataPath: dataLocation
-            cookiePolicy: myCookiePolicy
             userAgent: myUA
         }
         WebView {
@@ -63,15 +59,54 @@ MainView {
             } 
             width: parent.width
             height: parent.height
-
             context: webcontext
             url: myUrl
+
             preferences.localStorageEnabled: true
             preferences.allowFileAccessFromFileUrls: true
             preferences.allowUniversalAccessFromFileUrls: true
             preferences.appCacheEnabled: true
             preferences.javascriptCanAccessClipboard: true
             filePicker: filePickerLoader.item
+
+           contextualActions: ActionList {
+              Actions.CopyLink {
+                  enabled: webview.contextualData.href.toString()
+                  onTriggered: {
+                      Clipboard.push([webview.contextualData.href])
+                      console.log(webview.contextualData.href)
+                  }
+              }
+              Actions.CopyImage {
+                  enabled: webview.contextualData.img.toString()
+                  onTriggered: Clipboard.push([webview.contextualData.img])
+              }
+              Actions.SaveImage {
+                  enabled: webview.contextualData.img.toString() && downloadLoader.status == Loader.Ready
+                  onTriggered: downloadLoader.item.downloadPicture(webview.contextualData.img)
+              }
+              Actions.ShareLink {
+                  enabled: webview.contextualData.href.toString()
+                  onTriggered: {
+                      var component = Qt.createComponent("Share.qml")
+                      console.log("component..."+component.status)
+                      if (component.status == Component.Ready) {
+                          var share = component.createObject(webview)
+                          share.onDone.connect(share.destroy)
+                          share.shareLink(webview.contextualData.href.toString(), webview.contextualData.title)
+                      } else {
+                          console.log(component.errorString())
+                      }
+                  }
+              }
+           }
+           selectionActions: ActionList {
+              Actions.Copy {
+                  onTriggered: {
+                       webview.copy()
+                  }
+              }
+           }
 
             function navigationRequestedDelegate(request) {
                 var url = request.url.toString();
@@ -101,6 +136,13 @@ MainView {
                 console.warn("url is: " + url)
             }
             onGeolocationPermissionRequested: { request.accept() }
+
+            Loader {
+                id: downloadLoader
+                source: "Downloader.qml"
+                asynchronous: true
+            }
+
             Loader {
                 id: filePickerLoader
                 source: "ContentPickerDialog.qml"
@@ -136,7 +178,6 @@ MainView {
                     onTriggered: {
                         webview.reload()
                     }
-                    text: qsTr("Reload")
                 },
                 RadialAction {
                     id: forward
@@ -145,7 +186,6 @@ MainView {
                     onTriggered: {
                         webview.goForward()
                     }
-                   text: qsTr("Forward")
                  },
                 RadialAction {
                     id: back
@@ -154,7 +194,6 @@ MainView {
                     onTriggered: {
                         webview.goBack()
                     }
-                    text: qsTr("Back")
                 }
             ]
         }
