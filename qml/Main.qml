@@ -1,7 +1,7 @@
 import QtQuick 2.4
 import Ubuntu.Web 0.2
-import Ubuntu.Components 1.2
-import com.canonical.Oxide 1.7 as Oxide
+import Ubuntu.Components 1.3
+import com.canonical.Oxide 1.11 as Oxide
 import "UCSComponents"
 import Ubuntu.Content 1.1
 import "actions" as Actions
@@ -13,7 +13,7 @@ import "../config.js" as Conf
 MainView {
     objectName: "mainView"
 
-    applicationName: "google-plus.ogra"
+    applicationName: "youtube-web.mateo-salta"
 
     anchorToKeyboard: true
     automaticOrientation: true
@@ -25,6 +25,11 @@ MainView {
 
     Page {
         id: page
+        header: Rectangle {
+            color: UbuntuColors.orange
+            width: parent.width
+            height: units.gu(0)
+            }
         anchors {
             fill: parent
             bottom: parent.bottom
@@ -162,13 +167,15 @@ MainView {
         }
         ThinProgressBar {
             webview: webview
+            width: parent.width + units.gu(5)
             anchors {
-                left: parent.left
-                right: parent.right
+                //left: parent.left
+               // right: parent.right
+               horizontalCenter: parent.horizontalCenter
                 top: parent.top
             }
         }
-        RadialBottomEdge {
+         RadialBottomEdge {
             id: nav
             visible: true
             actions: [
@@ -178,7 +185,9 @@ MainView {
                     onTriggered: {
                         webview.reload()
                     }
+                    text: qsTr("Reload")
                 },
+                
                 RadialAction {
                     id: forward
                     enabled: webview.canGoForward
@@ -186,14 +195,41 @@ MainView {
                     onTriggered: {
                         webview.goForward()
                     }
+                   text: qsTr("Forward")
                  },
+                  RadialAction {
+                    id: archive
+                    iconName: "weather-chance-of-storm"
+                    onTriggered: {
+                        webview.url = 'https://m.youtube.com/feed/trending'
+                    }
+                    text: qsTr("Trending")
+                },
+               
                 RadialAction {
+                    id: notes
+                    iconName: "home"
+                    onTriggered: {
+                        webview.url = 'http://m.youtube.com'
+                    }
+                    text: qsTr("Home")
+                },
+                RadialAction {
+                    id: subscriptions
+                    iconName: "media-playlist"
+                    onTriggered: {
+                        webview.url = 'https://m.youtube.com/feed/subscriptions'
+                    }
+                    text: qsTr("Subscriptions")
+                },
+                  RadialAction {
                     id: back
                     enabled: webview.canGoBack
                     iconName: "go-previous"
                     onTriggered: {
                         webview.goBack()
                     }
+                    text: qsTr("Back")
                 }
             ]
         }
@@ -205,6 +241,7 @@ MainView {
     Connections {
         target: webview
         onFullscreenChanged: nav.visible = !webview.fullscreen
+        onFullscreenRequested: webview.fullscreen = fullscreen
     }
     Connections {
         target: UriHandler

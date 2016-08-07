@@ -1,7 +1,11 @@
 [Desktop Entry]
-Name=Google Plus
+Name=YouTube
 Type=Application
 Icon=icon.png
 Exec=qmlscene %u qml/Main.qml
 Terminal=false
 X-Ubuntu-Touch=true
+X-Ubuntu-Splash-Image=icon.png
+X-Ubuntu-Splash-Color=#cc181e
+
+Name[en_US]=YouTube

@@ -1,15 +1,15 @@
 {
-    "description": "Another G+ WebApp",
+    "description": "youtube.com webapp",
     "framework": "ubuntu-sdk-15.04",
     "hooks": {
-        "google-plus": {
+        "youtube-web": {
+        "desktop": "YouTube.desktop",
         "apparmor": "app.json",
-        "desktop": "app.desktop",
-        "content-hub": "content-hub.json"
+        "urls": "youtube-web.url-dispatcher"
     }
 },
-    "maintainer": "Oliver Grawert <ogra@ubuntu.com>",
-	"name": "google-plus.ogra",
-    "title": "Google Plus",
+    "maintainer": "Mateo Salta <mateo_salta@yahoo.com>",
+	"name": "youtube-web.mateo-salta",
+    "title": "YouTube",
     "version": "0.1"
 }
