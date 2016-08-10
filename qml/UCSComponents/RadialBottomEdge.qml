@@ -194,6 +194,7 @@ Item {
 
             onPressed: {
                 previousY = bottomEdgeHint.y
+                
             }
 
             onMouseYChanged: {

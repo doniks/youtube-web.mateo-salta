@@ -1,18 +1,32 @@
 import QtQuick 2.4
 import Ubuntu.Web 0.2
 import Ubuntu.Components 1.3
-import com.canonical.Oxide 1.11 as Oxide
+import com.canonical.Oxide 1.15 as Oxide
 import "UCSComponents"
 import Ubuntu.Content 1.1
 import "actions" as Actions
 import QtMultimedia 5.0
 import QtFeedback 5.0
+import QtQuick.Window 2.2
+
 import "."
 import "../config.js" as Conf
+
+Window {
+    id: window
+
+
 
 MainView {
     objectName: "mainView"
 
+    
+
+anchors {
+            fill: parent
+        }
+
+        
     applicationName: "youtube-web.mateo-salta"
 
     anchorToKeyboard: true
@@ -26,16 +40,12 @@ MainView {
     Page {
         id: page
         header: Rectangle {
-            color: UbuntuColors.orange
-            width: parent.width
-            height: units.gu(0)
             }
         anchors {
             fill: parent
             bottom: parent.bottom
         }
-        width: parent.width
-        height: parent.height
+  
 
         HapticsEffect {
             id: vibration
@@ -60,12 +70,12 @@ MainView {
             id: webview
             anchors {
                 fill: parent
-                bottom: parent.bottom
+
             } 
-            width: parent.width
-            height: parent.height
+                                   // url = 'http://m.youtube.com'
+
             context: webcontext
-            url: myUrl
+            url: 'http://m.youtube.com'
 
             preferences.localStorageEnabled: true
             preferences.allowFileAccessFromFileUrls: true
@@ -165,6 +175,8 @@ MainView {
                 return false; 
             }
         }
+        
+        
         ThinProgressBar {
             webview: webview
             width: parent.width + units.gu(5)
@@ -240,8 +252,16 @@ MainView {
     }
     Connections {
         target: webview
-        onFullscreenChanged: nav.visible = !webview.fullscreen
         onFullscreenRequested: webview.fullscreen = fullscreen
+       
+        onFullscreenChanged: {
+                nav.visible = !webview.fullscreen
+                if (webview.fullscreen == true) {
+                    window.visibility = 5
+                } else {
+                    window.visibility = 4
+                }
+            }
     }
     Connections {
         target: UriHandler
@@ -254,3 +274,5 @@ MainView {
         }
     }
 }
+}
+

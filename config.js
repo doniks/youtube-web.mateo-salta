@@ -18,3 +18,4 @@ var webappUrlPattern = "https?://m.youtube.com/*,https?://www.youtube.com/*,http
 // Audible feedback when clicking links (the same constraints as
 // for hapticLinks apply) (optional)
 // var audibleLinks = "true"
+
