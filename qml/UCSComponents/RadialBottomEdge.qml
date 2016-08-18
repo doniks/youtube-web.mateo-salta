@@ -7,10 +7,10 @@ Item {
     id: bottomEdge
     
     property int hintSize: units.gu(8)
-    property color hintColor: Theme.palette.normal.overlay
+    property color hintColor: "#e52d27"
     property string hintIconName: "youtube-symbolic"
     property alias hintIconSource: hintIcon.source
-    property color hintIconColor: "#e52d27"
+    property color hintIconColor: "#FFFFFF"
     property bool bottomEdgeEnabled: true
 
     property int expandAngle : Screen.orientation == Qt.LandscapeOrientation ? 500 : 360
@@ -68,7 +68,7 @@ Item {
             id: dropShadow
             width: parent.width
             height: parent.height
-            border.color: "#B3B3B3"
+            border.color: "#000000"
             color: "Transparent"
             radius: parent.radius + 1
             z: -1

@@ -19,6 +19,7 @@ Window {
 
 MainView {
     objectName: "mainView"
+        theme.name: "Ubuntu.Components.Themes.SuruDark"
 
     
 
@@ -68,8 +69,11 @@ anchors {
         }
         WebView {
             id: webview
+            width: parent.width + units.dp(2)
             anchors {
-                fill: parent
+horizontalCenter: parent.horizontalCenter
+                top: parent.top
+                bottom: parent.bottom
 
             } 
                                    // url = 'http://m.youtube.com'
@@ -84,36 +88,19 @@ anchors {
             preferences.javascriptCanAccessClipboard: true
             filePicker: filePickerLoader.item
 
-           contextualActions: ActionList {
-              Actions.CopyLink {
-                  enabled: webview.contextualData.href.toString()
-                  onTriggered: {
-                      Clipboard.push([webview.contextualData.href])
-                      console.log(webview.contextualData.href)
-                  }
+           
+    contextualActions: ActionList {
+            
+    
+        
+        Action {
+            text: i18n.tr("Copy Link")
+                   enabled: contextModel && webview.contextualData.href.toString()
+            onTriggered: Clipboard.push([webview.contextualData.href])
               }
-              Actions.CopyImage {
-                  enabled: webview.contextualData.img.toString()
-                  onTriggered: Clipboard.push([webview.contextualData.img])
-              }
-              Actions.SaveImage {
-                  enabled: webview.contextualData.img.toString() && downloadLoader.status == Loader.Ready
-                  onTriggered: downloadLoader.item.downloadPicture(webview.contextualData.img)
-              }
-              Actions.ShareLink {
-                  enabled: webview.contextualData.href.toString()
-                  onTriggered: {
-                      var component = Qt.createComponent("Share.qml")
-                      console.log("component..."+component.status)
-                      if (component.status == Component.Ready) {
-                          var share = component.createObject(webview)
-                          share.onDone.connect(share.destroy)
-                          share.shareLink(webview.contextualData.href.toString(), webview.contextualData.title)
-                      } else {
-                          console.log(component.errorString())
-                      }
-                  }
-              }
+         
+              
+              
            }
            selectionActions: ActionList {
               Actions.Copy {
@@ -258,8 +245,10 @@ anchors {
                 nav.visible = !webview.fullscreen
                 if (webview.fullscreen == true) {
                     window.visibility = 5
+                                width: parent.width + units.dp(2)
                 } else {
                     window.visibility = 4
+                                width: parent.width + units.dp(2)
                 }
             }
     }

@@ -5,7 +5,7 @@ Action {
     property string iconName: "add"
         property string iconSource
     property color iconColor: "Black"
-    property color backgroundColor: "White"
+    property color backgroundColor: "white"
         property string text
             property bool top: false
     property bool enabled: true
