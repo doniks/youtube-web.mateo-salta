@@ -1,7 +1,7 @@
 import QtQuick 2.4
 import Ubuntu.Web 0.2
 import Ubuntu.Components 1.3
-import com.canonical.Oxide 1.15 as Oxide
+import com.canonical.Oxide 1.9 as Oxide
 import "UCSComponents"
 import Ubuntu.Content 1.1
 import "actions" as Actions
@@ -9,11 +9,11 @@ import QtMultimedia 5.0
 import QtFeedback 5.0
 import QtQuick.Window 2.2
 
+
 import "."
 import "../config.js" as Conf
 
-Window {
-    id: window
+
 
 
 
@@ -35,6 +35,9 @@ anchors {
 
     property string myUrl: Conf.webappUrl
     property string myPattern: Conf.webappUrlPattern
+    
+
+
 
     property string myUA: Conf.webappUA ? Conf.webappUA : "Mozilla/5.0 (Linux; Android 5.0; Nexus 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.102 Mobile Safari/537.36"
 
@@ -68,6 +71,7 @@ anchors {
             userAgent: myUA
         }
         WebView {
+
             id: webview
             width: parent.width + units.dp(2)
             anchors {
@@ -91,13 +95,49 @@ horizontalCenter: parent.horizontalCenter
            
     contextualActions: ActionList {
             
-    
-        
+    /// strange...
+            Action {
+                        text: i18n.tr(webview.contextualData.href.toString())
+        enabled: contextualData.herf.toString()
+              }
+              
+     /// didn't seem to work without a item that is always triggered...
         Action {
             text: i18n.tr("Copy Link")
-                   enabled: contextModel && webview.contextualData.href.toString()
+                   enabled: webview.contextualData.href.toString()
+                   
+                   //contextualData.href.toString()
             onTriggered: Clipboard.push([webview.contextualData.href])
               }
+              
+                            Action {
+                                        text: i18n.tr("Share Link")
+                  enabled: webview.contextualData.href.toString()
+                  onTriggered: {
+                      var component = Qt.createComponent("Share.qml")
+                      console.log("component..."+component.status)
+                      if (component.status == Component.Ready) {
+                          var share = component.createObject(webview)
+                          share.onDone.connect(share.destroy)
+                          share.shareLink(webview.contextualData.href.toString(), webview.contextualData.title)
+                      } else {
+                          console.log(component.errorString())
+                      }
+                  }
+                  }
+                  
+               Action {
+            text: i18n.tr("Copy Image")
+                  enabled: webview.contextualData.img.toString()
+                  onTriggered: Clipboard.push([webview.contextualData.img])
+              }
+              Action {
+                          text: i18n.tr("Download Image")
+                  enabled: webview.contextualData.img.toString() && downloadLoader.status == Loader.Ready
+                  onTriggered: downloadLoader.item.downloadPicture(webview.contextualData.img)
+              }
+              
+
          
               
               
@@ -263,5 +303,5 @@ horizontalCenter: parent.horizontalCenter
         }
     }
 }
-}
+
 
