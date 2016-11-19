@@ -65,11 +65,17 @@ anchors {
             id: clicksound
             source: "../sounds/Click.wav"
         }
-
-        WebContext {
-            id: webcontext
-            userAgent: myUA
-        }
+ WebContext {
+                id: webcontext
+                userAgent: myUA
+                userScripts: [
+                    Oxide.UserScript {
+                        context: "oxide://"
+                        url: Qt.resolvedUrl("../userscripts/ubuntutheme.js")
+                        matchAllFrames: true
+                    }
+                ]
+            }
         WebView {
 
             id: webview
