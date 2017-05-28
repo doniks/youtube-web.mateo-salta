@@ -19,7 +19,7 @@ Item {
 
     property list<RadialAction> actions
     property real actionButtonSize: units.gu(7)
-    property real actionButtonDistance: 1.5* hintSize
+    property real actionButtonDistance: 1.6* hintSize
 
     anchors.fill: parent
 

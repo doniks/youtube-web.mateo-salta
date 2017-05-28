@@ -1,7 +1,7 @@
 import QtQuick 2.4
 import Ubuntu.Web 0.2
 import Ubuntu.Components 1.3
-import com.canonical.Oxide 1.9 as Oxide
+import com.canonical.Oxide 1.19 as Oxide
 import "UCSComponents"
 import Ubuntu.Content 1.1
 import "actions" as Actions
@@ -44,6 +44,10 @@ anchors {
     Page {
         id: page
         header: Rectangle {
+        color: "#000000"
+            width: parent.width
+            height: units.dp(.5)
+            z: 1
             }
         anchors {
             fill: parent
@@ -89,7 +93,7 @@ horizontalCenter: parent.horizontalCenter
                                    // url = 'http://m.youtube.com'
 
             context: webcontext
-            url: 'http://m.youtube.com'
+            url: myUrl
 
             preferences.localStorageEnabled: true
             preferences.allowFileAccessFromFileUrls: true
@@ -213,6 +217,7 @@ horizontalCenter: parent.horizontalCenter
         ThinProgressBar {
             webview: webview
             width: parent.width + units.gu(5)
+            z: 2
             anchors {
                 //left: parent.left
                // right: parent.right
@@ -242,8 +247,26 @@ horizontalCenter: parent.horizontalCenter
                     }
                    text: qsTr("Forward")
                  },
+                    RadialAction {
+                    id: account
+                    iconName: "account"
+                    onTriggered: {
+                        webview.url = 'https://m.youtube.com/feed/account'
+                    }
+                    text: qsTr("Account")
+                    
+                },
+                    RadialAction {
+                    id: subscriptions
+                    iconName: "media-playlist"
+                    onTriggered: {
+                        webview.url = 'https://m.youtube.com/feed/subscriptions'
+                    }
+                    text: qsTr("Subscriptions")
+                    
+                },
                   RadialAction {
-                    id: archive
+                    id: trending
                     iconName: "weather-chance-of-storm"
                     onTriggered: {
                         webview.url = 'https://m.youtube.com/feed/trending'
@@ -252,21 +275,16 @@ horizontalCenter: parent.horizontalCenter
                 },
                
                 RadialAction {
-                    id: notes
+                    id: home
                     iconName: "home"
                     onTriggered: {
                         webview.url = 'http://m.youtube.com'
                     }
                     text: qsTr("Home")
                 },
-                RadialAction {
-                    id: subscriptions
-                    iconName: "media-playlist"
-                    onTriggered: {
-                        webview.url = 'https://m.youtube.com/feed/subscriptions'
-                    }
-                    text: qsTr("Subscriptions")
-                },
+             
+
+            
                   RadialAction {
                     id: back
                     enabled: webview.canGoBack
