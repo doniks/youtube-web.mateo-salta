@@ -16,7 +16,7 @@ ProgressBar {
  property int minimum: 0
  property int maximum: 100
  property int value: webview.loadProgress
- property color color: "#E62117"
+ property color color: "#FF0000"
      showProgressPercentage: false
   visible: webview ? webview.loading
                        // Workaround for https://bugs.launchpad.net/oxide/+bug/1290821.
@@ -31,7 +31,7 @@ ProgressBar {
  id: border
  anchors.fill: parent
 
- color: "#FFFFFF"
+ color: "#282828"
  border.width: 0
  border.color: parent.color
  }

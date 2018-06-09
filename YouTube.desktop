@@ -5,7 +5,8 @@ Icon=icon.png
 Exec=qmlscene %u qml/Main.qml
 Terminal=false
 X-Ubuntu-Touch=true
-X-Ubuntu-Splash-Image=icon.png
-X-Ubuntu-Splash-Color=#cc181e
+
+X-Ubuntu-Splash-Color=#ffffff
+X-Ubuntu-Splash-Image=icon-splash.png
 
 Name[en_US]=YouTube

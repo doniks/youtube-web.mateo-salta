@@ -5,15 +5,15 @@ import QtQuick.Window 2.1
 
 Item {
     id: bottomEdge
-    
+
     property int hintSize: units.gu(8)
-    property color hintColor: "#e52d27"
+    property color hintColor: "#FF0000"
     property string hintIconName: "youtube-symbolic"
     property alias hintIconSource: hintIcon.source
-    property color hintIconColor: "#FFFFFF"
+    property color hintIconColor: "#ffffff"
     property bool bottomEdgeEnabled: true
 
-    property int expandAngle : Screen.orientation == Qt.LandscapeOrientation ? 500 : 360
+    property int expandAngle : Screen.orientation == Qt.LandscapeOrientation ? 600 : 250
     property real expandedPosition: (0.85 - 0.25 * expandAngle/360) * height
     property real collapsedPosition: height - hintSize/2
 
@@ -40,7 +40,7 @@ Item {
         visible: bottomEdgeHint.y !== collapsedPosition
         color: "black"
         anchors.fill: parent
-        opacity: 0.9 * (((bottomEdge.height - bottomEdgeHint.y) / bottomEdge.height) * 2)
+        opacity: 0.9 * (((bottomEdge.height - bottomEdgeHint.y) / bottomEdge.height) * 2)/((expandAngle * .003))
 
         MouseArea {
             anchors.fill: parent
@@ -194,7 +194,7 @@ Item {
 
             onPressed: {
                 previousY = bottomEdgeHint.y
-                
+
             }
 
             onMouseYChanged: {
@@ -237,7 +237,7 @@ Item {
                     target: bottomEdgeHint
                     property: "y"
                     spring: 2
-                   damping: .2 
+                   damping: .2
                  // epsilon: .05
                 }
             },

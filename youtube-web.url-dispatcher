@@ -9,6 +9,14 @@
         },
         {
                 "protocol": "http",
+                "domain-suffix": "youtu.be"
+        },
+        {
+                "protocol": "https",
+                "domain-suffix": "youtu.be"
+        },
+        {
+                "protocol": "http",
                 "domain-suffix": "m.youtube.com"
         },
         {

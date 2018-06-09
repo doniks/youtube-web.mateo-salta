@@ -2,14 +2,14 @@ import QtQuick 2.4
 import Ubuntu.Web 0.2
 import Ubuntu.Components 1.3
 import com.canonical.Oxide 1.19 as Oxide
+import Ubuntu.Components.Popups 1.3
 import "UCSComponents"
 import Ubuntu.Content 1.1
 import "actions" as Actions
 import QtMultimedia 5.0
 import QtFeedback 5.0
-import QtQuick.Window 2.2
-
-
+import Ubuntu.Unity.Action 1.1 as UnityActions
+import Ubuntu.UnityWebApps 0.1 as UnityWebApps
 import "."
 import "../config.js" as Conf
 
@@ -18,6 +18,7 @@ import "../config.js" as Conf
 
 
 MainView {
+id: root
     objectName: "mainView"
         theme.name: "Ubuntu.Components.Themes.SuruDark"
 
@@ -35,6 +36,14 @@ anchors {
 
     property string myUrl: Conf.webappUrl
     property string myPattern: Conf.webappUrlPattern
+        property url webviewOverrideFile: Qt.resolvedUrl("WebViewImplOxide.qml")
+
+    property bool blockOpenExternalUrls: false
+    property bool runningLocalApplication: false
+
+    property bool openExternalUrlInOverlay: true
+    property bool popupBlockerEnabled: true
+
     
 
 
@@ -83,6 +92,16 @@ anchors {
         WebView {
 
             id: webview
+            
+            signal openUrlExternallyRequested(string url)
+
+            
+                        objectName: "webview"
+            alertDialog: AlertDialog {}
+  confirmDialog: ConfirmDialog {}
+    promptDialog: PromptDialog {}
+   beforeUnloadDialog: BeforeUnloadDialog {}
+   
             width: parent.width + units.dp(2)
             anchors {
 horizontalCenter: parent.horizontalCenter
@@ -101,6 +120,8 @@ horizontalCenter: parent.horizontalCenter
             preferences.appCacheEnabled: true
             preferences.javascriptCanAccessClipboard: true
             filePicker: filePickerLoader.item
+                property bool blockOpenExternalUrls: false
+                    property bool runningLocalApplication: true
 
            
     contextualActions: ActionList {
@@ -200,6 +221,44 @@ horizontalCenter: parent.horizontalCenter
                 source: "ContentPickerDialog.qml"
                 asynchronous: true
             }
+            
+            
+                  //Sad page 
+        Loader {
+                anchors {
+                    fill: webview
+                    
+                }
+                active: webview &&
+                        (webProcessMonitor.crashed || (webProcessMonitor.killed && !webview.loading))
+                sourceComponent: SadPage {
+                    webview: webview
+                    objectName: "webviewSadPage"
+                }
+               
+                WebProcessMonitor {
+                    id: webProcessMonitor
+                    webview: webview
+                }
+                asynchronous: true
+            }
+                Loader {
+            anchors {
+                fill: webview
+
+            }
+            sourceComponent: ErrorSheet {
+                visible: webview && webview.lastLoadFailed
+                url: webview ? webview.url : ""
+                onRefreshClicked: {
+                    if (webview)
+                        webview.reload()
+                }
+            }
+            asynchronous: true
+        }
+
+
             function isValid (url){ 
                 var pattern = myPattern.split(',');
                 for (var i=0; i<pattern.length; i++) {
@@ -213,7 +272,34 @@ horizontalCenter: parent.horizontalCenter
             }
         }
         
-        
+            UnityWebApps.UnityWebApps {
+        id: unityWebapps
+        name: webappName
+        bindee: containerWebView.currentWebview
+        actionsContext: actionManager.globalContext
+        model: UnityWebApps.UnityWebappsAppModel { searchPath: webappModelSearchPath }
+        injectExtraUbuntuApis: runningLocalApplication
+        injectExtraContentShareCapabilities: !runningLocalApplication
+
+        Component.onCompleted: {
+         preferences.localStorageEnabled = true;
+            // Delay bind the property to add a bit of backward compatibility with
+            // other unity-webapps-qml modules
+            if (unityWebapps.embeddedUiComponentParent !== undefined) {
+                unityWebapps.embeddedUiComponentParent = webapp
+            }
+        }
+    }
+    
+    
+
+
+    Component {
+        id: pickerComponent
+
+        PickerDialog {}
+}
+
         ThinProgressBar {
             webview: webview
             width: parent.width + units.gu(5)
@@ -297,6 +383,34 @@ horizontalCenter: parent.horizontalCenter
             ]
         }
     }
+    
+    Loader {
+        id: webappContainerWebViewLoader
+        objectName: "containerWebviewLoader"
+        anchors.fill: parent
+        focus: true
+    }
+    
+       PopupWindowController {
+        id: popupController
+        objectName: "popupController"
+        webappUrlPatterns: webview.webappUrlPatterns
+        mainWebappView: webview.currentWebview
+        blockOpenExternalUrls: true
+        mediaAccessDialogComponent: mediaAccessDialogComponent
+        //wide: containerWebview.wide
+        onInitializeOverlayViewsWithUrls: {
+            if (webappContainerWebViewLoader.item) {
+                for (var i in urls) {
+                    webappContainerWebViewLoader
+                        .item
+                        .openOverlayForUrl(urls[i])
+                }
+            }
+        }
+
+    }
+    
     Connections {
         target: Qt.inputMethod
         onVisibleChanged: nav.visible = !nav.visible
