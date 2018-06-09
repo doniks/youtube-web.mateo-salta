@@ -39,8 +39,8 @@ MainView {
 
     property string myUA: Conf.webappUA ? Conf.webappUA : "Mozilla/5.0 (Linux; Android 5.0; Nexus 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.102 Mobile Safari/537.36"
 
-    property real playBackSpeedLevelNormal: 3 // third item is 1.0, ie no accelleration or slow down
-    property real playBackSpeedLevel: 3
+    property real playBackSpeedLevelNormal: 4 // fourth item is 1.0, ie no accelleration or slow down
+    property real playBackSpeedLevel: 4
     property var playBackSpeeds: [ 0.2, 0.5, 0.8, 0.9, 1.0, 1.1, 1.2, 1.5, 2.0, 3.5, 5 ]
 
     function changePlaybackSpeedLevel(change){
