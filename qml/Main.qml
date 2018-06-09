@@ -39,6 +39,21 @@ MainView {
 
     property string myUA: Conf.webappUA ? Conf.webappUA : "Mozilla/5.0 (Linux; Android 5.0; Nexus 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.102 Mobile Safari/537.36"
 
+    property real playBackSpeedLevelNormal: 3 // third item is 1.0, ie no accelleration or slow down
+    property real playBackSpeedLevel: 3
+    property var playBackSpeeds: [ 0.2, 0.5, 0.8, 0.9, 1.0, 1.1, 1.2, 1.5, 2.0, 3.5, 5 ]
+
+    function changePlaybackSpeedLevel(change){
+        console.log("change", change, playBackSpeeds.length, playBackSpeeds[playBackSpeedLevelNormal]);
+        playBackSpeedLevel = playBackSpeedLevel + change;
+        if ( playBackSpeedLevel >= playBackSpeeds.length ){
+            playBackSpeedLevel = playBackSpeeds.length -1;
+        }
+        else if ( playBackSpeedLevel < 0 ){
+            playBackSpeedLevel = 0;
+        }
+    }
+
     Page {
         id: page
         header: Rectangle {
@@ -287,66 +302,98 @@ MainView {
         RadialBottomEdge {
             id: nav
             visible: true
+            property string timeschar:
+                "\u2a09" // leaves a strange space after the x
+                //"\u2715" // looks a bit off, because the x is a little thicker than the text
+                //"x" // guess what, looks like an x character
+                //"\ua058" // doesn't work
+            hintText: ( root.playBackSpeedLevel === root.playBackSpeedLevelNormal ) ? "" : timeschar + root.playBackSpeeds[root.playBackSpeedLevel]
             actions: [
                 RadialAction {
-                    id: reload
+                    text: qsTr("Reload")
                     iconName: "reload"
                     onTriggered: {
                         webview.reload()
                     }
-                    text: qsTr("Reload")
                 },
+
                 RadialAction {
-                    id: forward
+                    text: qsTr("Forward")
                     enabled: webview.canGoForward
                     iconName: "go-next"
                     onTriggered: {
                         webview.goForward()
                     }
-                    text: qsTr("Forward")
                 },
+
                 RadialAction {
-                    id: account
+                    text: qsTr("Account")
                     iconName: "account"
                     onTriggered: {
                         webview.url = 'https://m.youtube.com/feed/account'
                     }
-                    text: qsTr("Account")
-                    
                 },
                 RadialAction {
-                    id: subscriptions
+                    text: qsTr("Faster")
+                    iconName: "add"
+                    onTriggered: {
+                        changePlaybackSpeedLevel(+1);
+                        console.log(root.playBackSpeedLevel, root.playBackSpeeds[root.playBackSpeedLevel]);
+                        webview.url = 'javascript:document.querySelector("video").playbackRate='
+                                + root.playBackSpeeds[root.playBackSpeedLevel]
+                                + ';' ;
+                    }
+                },
+                RadialAction {
+                    text: qsTr("play")
+                    iconName: "media-playback-start"
+                    onTriggered: {
+                        webview.url = "javascript:
+player = document.getElementById('movie_player');
+state = player.getPlayerState();
+if (state == 1) {
+  player.pauseVideo();
+} else if (state == 2){
+  player.playVideo();
+}";
+                    }
+                },
+                RadialAction {
+                    text: qsTr("Fullscreen")
+                    iconName: "view-fullscreen"
+                    onTriggered: {
+                        webview.url = "javascript:
+player = document.getElementById('movie_player');
+player.webkitRequestFullScreen();
+";
+                    }
+                },
+                RadialAction {
+                    text: qsTr("Slower")
+                    iconName: "remove"
+                    onTriggered: {
+                        changePlaybackSpeedLevel(-1);
+                        console.log(root.playBackSpeedLevel, root.playBackSpeeds[root.playBackSpeedLevel]);
+                        webview.url = 'javascript:document.querySelector("video").playbackRate='
+                                + root.playBackSpeeds[root.playBackSpeedLevel]
+                                + ';' ;
+                    }
+                },
+
+                RadialAction {
+                    text: qsTr("Subscriptions")
                     iconName: "media-playlist"
                     onTriggered: {
                         webview.url = 'https://m.youtube.com/feed/subscriptions'
                     }
-                    text: qsTr("Subscriptions")
-                    
                 },
                 RadialAction {
-                    id: trending
-                    iconName: "weather-chance-of-storm"
-                    onTriggered: {
-                        webview.url = 'https://m.youtube.com/feed/trending'
-                    }
-                    text: qsTr("Trending")
-                },
-                RadialAction {
-                    id: home
-                    iconName: "home"
-                    onTriggered: {
-                        webview.url = 'http://m.youtube.com'
-                    }
-                    text: qsTr("Home")
-                },
-                RadialAction {
-                    id: back
+                    text: qsTr("Back")
                     enabled: webview.canGoBack
                     iconName: "go-previous"
                     onTriggered: {
                         webview.goBack()
                     }
-                    text: qsTr("Back")
                 }
             ]
         }
@@ -408,5 +455,3 @@ MainView {
         }
     }
 }
-
-

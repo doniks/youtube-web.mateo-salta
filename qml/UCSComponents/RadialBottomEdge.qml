@@ -11,6 +11,7 @@ Item {
     property string hintIconName: "youtube-symbolic"
     property alias hintIconSource: hintIcon.source
     property color hintIconColor: "#ffffff"
+    property string hintText: ""
     property bool bottomEdgeEnabled: true
 
     property int expandAngle : Screen.orientation == Qt.LandscapeOrientation ? 600 : 250
@@ -89,6 +90,19 @@ Item {
                 verticalCenterOffset: width * ((bottomEdgeHint.y - expandedPosition)
                                                /(expandedPosition - collapsedPosition))
             }
+        }
+
+        Label {
+            id: hintText
+            enabled: text !== ""
+            z:2
+
+            anchors{
+                horizontalCenter:hintIcon.horizontalCenter
+                top:hintIcon.bottom
+            }
+
+            text:bottomEdge.hintText
         }
 
         property real actionListDistance: -actionButtonDistance * ((bottomEdgeHint.y - collapsedPosition)
