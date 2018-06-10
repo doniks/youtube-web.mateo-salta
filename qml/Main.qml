@@ -1,4 +1,5 @@
 import QtQuick 2.4
+import QtQuick.LocalStorage 2.0
 import Ubuntu.Web 0.2
 import Ubuntu.Components 1.3
 import com.canonical.Oxide 1.19 as Oxide
@@ -123,6 +124,60 @@ MainView {
             property bool blockOpenExternalUrls: false
             property bool runningLocalApplication: true
 
+
+            /*
+              local storage for bookmarks
+
+              DONE:
+              - long press init db, then
+              - long press bookmark, it stores it
+              you can see it here
+              echo '.dump bookmarks' | sqlite3 ~/.local/share/youtube-web.mateo-salta/Databases/1a7795a68b29f0d9cd029a31f9cffbea.sqlite
+
+              TODO:
+              - automatically initialize the db
+              - make a ui to show and load the bookmarks
+              - fix the title of the bookmarks
+              - make a way to delete them
+              - refactor code into a separate file
+              */
+            function dbInit()
+            {
+                var db = LocalStorage.openDatabaseSync("bookmarks", "1.0", "bookmarks", 1000000)
+                try {
+                    db.transaction(function (tx) {
+                        tx.executeSql('CREATE TABLE IF NOT EXISTS bookmarks(name text, url text)')
+                    })
+                } catch (err) {
+                    console.log("Error creating table in database: " + err)
+                };
+            }
+
+            function dbGetHandle()
+            {
+                try {
+                    var db = LocalStorage.openDatabaseSync("bookmarks", "", "bookmarks", 1000000)
+                } catch (err) {
+                    console.log("Error opening database: " + err)
+                }
+                return db
+            }
+
+            function dbInsertBookmark(name, url)
+            {
+                var db = dbGetHandle()
+                var rowid = 0;
+                db.transaction(function (tx) {
+                    tx.executeSql('INSERT INTO bookmarks VALUES(?, ?)',
+                                  [name, url])
+                    var result = tx.executeSql('SELECT last_insert_rowid()')
+                    rowid = result.insertId
+                })
+                console.log("done", rowid);
+                return rowid;
+            }
+
+
             contextualActions: ActionList {
 
                 /// strange...
@@ -130,6 +185,47 @@ MainView {
                     text: i18n.tr(webview.contextualData.href.toString())
                     enabled: contextualData.herf.toString()
                 }
+
+
+                Action {
+                   text: i18n.tr("Create bookmark")
+                    onTriggered: {
+                        console.log("webview.name", webview.name);
+                        console.log("webview.title", webview.title);
+                        console.log("webview.url", webview.url);
+                        console.log("webview.cD.title", webview.contextualData.title);
+                        console.log("webview.cD.href", webview.contextualData.href.toString() );
+                        webview.dbInsertBookmark(webview.title, webview.url);
+                    }
+                }
+
+                Action {
+                    text: qsTr("Init DB")
+                    onTriggered: {
+                        webview.dbInit();
+                    }
+                }
+
+                Action {
+                    text: qsTr("UA")
+                    onTriggered: {
+                        webview.url = 'https://www.whatismybrowser.com/detect/what-is-my-user-agent';
+                    }
+                }
+
+
+                Action {
+                    text: qsTr("Mute")
+                    onTriggered: {
+                        webview.url = "javascript:
+player = document.getElementById('movie_player');
+if (player.isMuted()) player.unMute();
+else player.mute();
+";
+                    }
+                }
+
+
 
                 /// didn't seem to work without a item that is always triggered...
                 Action {
@@ -470,3 +566,5 @@ player.webkitRequestFullScreen();
         }
     }
 }
+
+
