@@ -22,7 +22,7 @@ MainView {
         fill: parent
     }
 
-    applicationName: "youtube-web.mateo-salta"
+    applicationName: "youtube-next.mateo-salta"
 
     anchorToKeyboard: true
     automaticOrientation: true
@@ -287,53 +287,37 @@ MainView {
 
             PickerDialog {}
         }
+    
 
-        ThinProgressBar {
-            webview: webview
-            width: parent.width + units.gu(5)
-            z: 2
-            anchors {
-                //left: parent.left
-                // right: parent.right
-                horizontalCenter: parent.horizontalCenter
-                top: parent.top
-            }
-        }
-        RadialBottomEdge {
-            id: nav
-            visible: true
-            property string timeschar:
+
+        
+BottomEdge {
+
+id: bottomEdge
+height:  units.gu(6)
+
+
+contentComponent: Rectangle {
+width: page.width
+height: units.gu(6)
+anchors.top: page.top
+color: Qt.rgba(0.5, 1, bottomEdge.dragProgress, 1);
+PageHeader {
+property string timeschar:
                 "\u2a09" // leaves a strange space after the x
                 //"\u2715" // looks a bit off, because the x is a little thicker than the text
                 //"x" // guess what, looks like an x character
                 //"\ua058" // doesn't work
-            hintText: ( root.playBackSpeedLevel === root.playBackSpeedLevelNormal ) ? "" : timeschar + root.playBackSpeeds[root.playBackSpeedLevel]
-            actions: [
-                RadialAction {
-                    text: qsTr("Reload")
-                    iconName: "reload"
-                    onTriggered: {
-                        webview.reload()
-                    }
-                },
+            title: ( root.playBackSpeedLevel === root.playBackSpeedLevelNormal ) ? "" : timeschar + root.playBackSpeeds[root.playBackSpeedLevel]
 
-                RadialAction {
-                    text: qsTr("Forward")
-                    enabled: webview.canGoForward
-                    iconName: "go-next"
-                    onTriggered: {
-                        webview.goForward()
-                    }
-                },
 
-                RadialAction {
-                    text: qsTr("Account")
-                    iconName: "account"
-                    onTriggered: {
-                        webview.url = 'https://m.youtube.com/feed/account'
-                    }
-                },
-                RadialAction {
+ActionBar {
+anchors {
+left: parent.left
+leftMargin: units.gu(12)}
+numberOfSlots: 4
+actions: [
+Action {
                     text: qsTr("Faster")
                     iconName: "add"
                     onTriggered: {
@@ -344,7 +328,7 @@ MainView {
                                 + ';' ;
                     }
                 },
-                RadialAction {
+                Action {
                     text: qsTr("play")
                     iconName: "media-playback-start"
                     onTriggered: {
@@ -358,17 +342,8 @@ if (state == 1) {
 }";
                     }
                 },
-                RadialAction {
-                    text: qsTr("Fullscreen")
-                    iconName: "view-fullscreen"
-                    onTriggered: {
-                        webview.url = "javascript:
-player = document.getElementById('movie_player');
-player.webkitRequestFullScreen();
-";
-                    }
-                },
-                RadialAction {
+                
+               Action {
                     text: qsTr("Slower")
                     iconName: "remove"
                     onTriggered: {
@@ -378,25 +353,89 @@ player.webkitRequestFullScreen();
                                 + root.playBackSpeeds[root.playBackSpeedLevel]
                                 + ';' ;
                     }
-                },
+                }
+]
+}
 
-                RadialAction {
-                    text: qsTr("Subscriptions")
-                    iconName: "media-playlist"
+ActionBar {
+anchors {
+right: parent.right }
+numberOfSlots: 4
+actions: [Action {
+ text: qsTr("Forward")
+                    enabled: webview.canGoForward
+                    iconName: "go-next"
                     onTriggered: {
-                        webview.url = 'https://m.youtube.com/feed/subscriptions'
+                        webview.goForward()
+                        bottomEdge.collapse()
+                        
                     }
-                },
-                RadialAction {
-                    text: qsTr("Back")
+},
+Action {
+ text: qsTr("Reload")
+                    iconName: "reload"
+                    onTriggered: {
+                        webview.reload()
+                        bottomEdge.collapse()
+                    }
+},
+Action {
+  text: qsTr("Back")
                     enabled: webview.canGoBack
                     iconName: "go-previous"
                     onTriggered: {
                         webview.goBack()
+                        bottomEdge.collapse()
                     }
-                }
-            ]
+},
+
+Action {
+id: home
+                    iconName: "home"
+                    onTriggered: {
+                        webview.url = 'http://m.youtube.com'
+                        bottomEdge.collapse()
+                    }
+                    text: qsTr("Home")
+},
+Action {
+  text: qsTr("Account")
+                    iconName: "account"
+                    onTriggered: {
+                        webview.url = 'https://m.youtube.com/feed/account'
+                                                bottomEdge.collapse()
+                    }
+},
+Action {
+text: qsTr("Subscriptions")
+                    iconName: "media-playlist"
+                    onTriggered: {
+                        webview.url = 'https://m.youtube.com/feed/subscriptions'
+                                                bottomEdge.collapse()
+                    }                 
+}
+
+
+]
+}
+
+
+}
+}
+}
+
+        ThinProgressBar {
+            webview: webview
+            width: parent.width + units.gu(5)
+            z: 2
+            anchors {
+                //left: parent.left
+                // right: parent.right
+                horizontalCenter: parent.horizontalCenter
+                top: parent.top
+            }
         }
+ 
     }
     
     Loader {
