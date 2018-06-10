@@ -334,8 +334,16 @@ MainView {
                     }
                 },
                 RadialAction {
+                    text: qsTr("Skip forward")
+                    iconName: "media-skip-forward"
+                    onTriggered: {
+                        webview.url = "javascript:document.getElementById('movie_player').seekBy(10);" ;
+                    }
+                },
+
+                RadialAction {
                     text: qsTr("Faster")
-                    iconName: "add"
+                    iconName: "media-seek-forward"
                     onTriggered: {
                         changePlaybackSpeedLevel(+1);
                         console.log(root.playBackSpeedLevel, root.playBackSpeeds[root.playBackSpeedLevel]);
@@ -370,13 +378,20 @@ player.webkitRequestFullScreen();
                 },
                 RadialAction {
                     text: qsTr("Slower")
-                    iconName: "remove"
+                    iconName: "media-seek-backward"
                     onTriggered: {
                         changePlaybackSpeedLevel(-1);
-                        console.log(root.playBackSpeedLevel, root.playBackSpeeds[root.playBackSpeedLevel]);
                         webview.url = 'javascript:document.querySelector("video").playbackRate='
                                 + root.playBackSpeeds[root.playBackSpeedLevel]
                                 + ';' ;
+                    }
+                },
+
+                RadialAction {
+                    text: qsTr("Skip backward")
+                    iconName: "media-skip-backward"
+                    onTriggered: {
+                        webview.url = "javascript:document.getElementById('movie_player').seekBy(-5);" ;
                     }
                 },
 
