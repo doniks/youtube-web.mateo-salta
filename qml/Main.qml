@@ -140,6 +140,7 @@ MainView {
               - fix the title of the bookmarks
               - make a way to delete them
               - refactor code into a separate file
+	      - add thumbnails to bookmarks https://stackoverflow.com/questions/9052750/force-high-quality-thumbnails-for-youtube#9069093
               */
             function dbInit()
             {
