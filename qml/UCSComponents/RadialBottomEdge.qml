@@ -2,26 +2,25 @@ import QtQuick 2.4
 import QtFeedback 5.0
 import Ubuntu.Components 1.3
 import QtQuick.Window 2.1
+import ".."
+
 
 Item {
     id: bottomEdge
+    
+  property int hintSize: units.gu(8)
 
-    property int hintSize: units.gu(8)
-    property color hintColor: "#FF0000"
-    property string hintIconName: "youtube-symbolic"
-    property alias hintIconSource: hintIcon.source
-    property color hintIconColor: "#ffffff"
-    property string hintText: ""
+    //property string hintIconName: "up"
+    //property alias hintIconSource: hintIcon.source
+    //property color hintIconColor: "#000000"
     property bool bottomEdgeEnabled: true
 
-    property int expandAngle : Screen.orientation == Qt.LandscapeOrientation ? 600 : 250
-    property real expandedPosition: (0.85 - 0.25 * expandAngle/360) * height
-    property real collapsedPosition: height - hintSize/2
 
-    property list<RadialAction> actions
-    property real actionButtonSize: units.gu(7)
-    property real actionButtonDistance: 1.6* hintSize
+   // property int expandAngle : Screen.orientation == Qt.LandscapeOrientation ? 500 : 360
+    //property real expandedPosition: (0.85 - 0.25 * expandAngle/360) * height
+    property real collapsedPosition: height - hintSize/7
 
+    
     anchors.fill: parent
 
     HapticsEffect {
@@ -34,14 +33,14 @@ Item {
         fadeIntensity: 0.0
     }
 
-    Rectangle {
+   /* Rectangle {
         id: bgVisual
 
         z: 1
         visible: bottomEdgeHint.y !== collapsedPosition
         color: "black"
         anchors.fill: parent
-        opacity: 0.9 * (((bottomEdge.height - bottomEdgeHint.y) / bottomEdge.height) * 2)/((expandAngle * .003))
+        opacity: 0.9 * (((bottomEdge.height - bottomEdgeHint.y) / bottomEdge.height) * 2)
 
         MouseArea {
             anchors.fill: parent
@@ -50,36 +49,25 @@ Item {
             z: 1
         }
 
-    }
+    } */
 
     Rectangle {
         id: bottomEdgeHint
 
-        color: hintColor
-        width: hintSize
-        height: width
-        radius: width
+        color: "black"
+        width: parent.width
+        opacity: 0.6
+        height: units.gu(6.5)
+        //radius: width
         visible: bottomEdgeEnabled
 
-        anchors.horizontalCenter: parent.horizontalCenter
+        //anchors.top: parent.bottom - units.gu(1)
         y: collapsedPosition
         z: parent.z + 1
 
-        Rectangle {
-            id: dropShadow
-            width: parent.width
-            height: parent.height
-            border.color: "#000000"
-            color: "Transparent"
-            radius: parent.radius + 1
-            z: -1
-            anchors {
-                centerIn: parent
-                verticalCenterOffset: -1 //units.gu(-0.3)
-            }
-        }
+     
 
-        Icon {
+       /* Icon {
             id: hintIcon
             width: hintSize/4
             height: width
@@ -88,84 +76,154 @@ Item {
             anchors {
                 centerIn: parent
                 verticalCenterOffset: width * ((bottomEdgeHint.y - expandedPosition)
-                                               /(expandedPosition - collapsedPosition))
+                                              )
             }
-        }
+        } */
 
-        Label {
-            id: hintText
-            enabled: text !== ""
-            z:2
 
-            anchors{
-                horizontalCenter:hintIcon.horizontalCenter
-                top:hintIcon.bottom
-            }
 
-            text:bottomEdge.hintText
-        }
 
-        property real actionListDistance: -actionButtonDistance * ((bottomEdgeHint.y - collapsedPosition)
-                                                                   /(collapsedPosition - expandedPosition))
+Rectangle {
+width: page.width
+height: units.gu(6.5)
+anchors.top: page.top
+z: parent.z +1
+color: "black"
 
-        Repeater {
-            id: actionList
-            model: actions
-            delegate: Rectangle {
-                id: actionDelegate
-                readonly property real radAngle: (index % actionList.count * (360/actionList.count)) * Math.PI / 180
-                property real distance: bottomEdgeHint.actionListDistance
-                z: -1
-                width: actionButtonSize
-                height: width
-                radius: width/2
-                anchors.centerIn: parent
-                color: modelData.backgroundColor
-                opacity: modelData.enabled ? 1.0 : 0.7
-                transform: Translate {
-                    x: distance * Math.sin(radAngle)
-                    y: -distance * Math.cos(radAngle)
-                }
 
-                Icon {
-                    id: icon
-                    anchors.centerIn: parent
-                    width: parent.width/2
-                    height: width
-//                    name: !modelData.iconSource ? modelData.iconName : undefined
-//                    source: modelData.iconSource ? Qt.resolvedUrl(modelData.iconSource) : undefined
-                    color: modelData.iconColor
-                    opacity: modelData.enabled ? 1.0 : 0.2
-                    Component.onCompleted: modelData.iconSource ? source = Qt.resolvedUrl(modelData.iconSource) : name = modelData.iconName
-                }
+           Label {
+           property string timeschar:
+                "\u2a09" // leaves a strange space after the x
+                //"\u2715" // looks a bit off, because the x is a little thicker than the text
+                //"x" // guess what, looks like an x character
+                //"\ua058" // doesn't work
+text: ( root.playBackSpeedLevel === root.playBackSpeedLevelNormal ) ? "" : timeschar + root.playBackSpeeds[root.playBackSpeedLevel]
 
-                Label {
-                    visible: text && bottomEdgeHint.state == "expanded"
-                    text: modelData.text
-                    anchors {
-                        top: !modelData.top ? icon.bottom : undefined
-                        topMargin: !modelData.top ? units.gu(3) : undefined
-                        bottom: modelData.top ? icon.top : undefined
-                        bottomMargin: modelData.top ? units.gu(3) : undefined
-                        horizontalCenter: icon.horizontalCenter
+ anchors {
+ left: parent.left
+ leftMargin: units.gu(1)
+verticalCenter: parent.verticalCenter
+ 
+ }
+//text: "Hello world!"
+textSize: Label.Large
+color: "white"
+}
+ActionBar {
+anchors {
+left: parent.left
+bottom: parent.bottom
+//center
+leftMargin: units.gu(12)}
+numberOfSlots: 4
+actions: [
+Action {
+                    text: qsTr("Faster")
+                    iconName: "add"
+                    onTriggered: {
+                        changePlaybackSpeedLevel(+1);
+                        console.log(root.playBackSpeedLevel, root.playBackSpeeds[root.playBackSpeedLevel]);
+                        webview.url = 'javascript:document.querySelector("video").playbackRate='
+                                + root.playBackSpeeds[root.playBackSpeedLevel]
+                                + ';' ;
                     }
-                    color: Theme.palette.normal.foregroundText
-                    font.bold: true
-                    fontSize: "medium"
-
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    enabled: modelData.enabled
-                    onClicked: {
-                        clickEffect.start()
-                        bottomEdgeHint.state = "collapsed"
-                        modelData.triggered(null)
+                },
+                Action {
+                    text: qsTr("play")
+                    iconName: "media-playback-start"
+                    onTriggered: {
+                        webview.url = "javascript:
+player = document.getElementById('movie_player');
+state = player.getPlayerState();
+if (state == 1) {
+  player.pauseVideo();
+} else if (state == 2){
+  player.playVideo();
+}";
+                    }
+                },
+                
+               Action {
+                    text: qsTr("Slower")
+                    iconName: "remove"
+                    onTriggered: {
+                        changePlaybackSpeedLevel(-1);
+                        console.log(root.playBackSpeedLevel, root.playBackSpeeds[root.playBackSpeedLevel]);
+                        webview.url = 'javascript:document.querySelector("video").playbackRate='
+                                + root.playBackSpeeds[root.playBackSpeedLevel]
+                                + ';' ;
                     }
                 }
-            }
-        }
+]
+}
+
+ActionBar {
+anchors {
+bottom: parent.bottom
+right: parent.right }
+numberOfSlots: 4
+actions: [Action {
+ text: qsTr("Forward")
+                    enabled: webview.canGoForward
+                    iconName: "go-next"
+                    onTriggered: {
+                        webview.goForward()
+bottomEdgeHint.state = "collapsed"
+                        
+                    }
+},
+Action {
+ text: qsTr("Reload")
+                    iconName: "reload"
+                    onTriggered: {
+                        webview.reload()
+bottomEdgeHint.state = "collapsed"
+                    }
+},
+Action {
+  text: qsTr("Back")
+                    enabled: webview.canGoBack
+                    iconName: "go-previous"
+                    onTriggered: {
+                        webview.goBack()
+bottomEdgeHint.state = "collapsed"
+                    }
+},
+
+Action {
+id: home
+                    iconName: "home"
+                    onTriggered: {
+                        webview.url = 'http://m.youtube.com'
+bottomEdgeHint.state = "collapsed"
+                    }
+                    text: qsTr("Home")
+},
+Action {
+  text: qsTr("Account")
+                    iconName: "account"
+                    onTriggered: {
+                        webview.url = 'https://m.youtube.com/feed/account'
+bottomEdgeHint.state = "collapsed"
+                    }
+},
+Action {
+text: qsTr("Subscriptions")
+                    iconName: "media-playlist"
+                    onTriggered: {
+                        webview.url = 'https://m.youtube.com/feed/subscriptions'
+bottomEdgeHint.state = "collapsed"
+                    }                 
+}
+
+
+]
+}
+
+
+
+}
+       
 
         MouseArea {
             id: mouseArea
@@ -208,7 +266,6 @@ Item {
 
             onPressed: {
                 previousY = bottomEdgeHint.y
-
             }
 
             onMouseYChanged: {
@@ -251,7 +308,7 @@ Item {
                     target: bottomEdgeHint
                     property: "y"
                     spring: 2
-                   damping: .2
+                   damping: .2 
                  // epsilon: .05
                 }
             },
